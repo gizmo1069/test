@@ -1,0 +1,21 @@
+.margin {
+    margin: 24px 0;
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.subtitle {
+    margin: 32px 0 8px;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.feedback_container {
+    display: flex;
+    justify-content: center;
+
+    > div {
+        flex-basis: 320px;
+        padding: 0 40px;
+    }
+}

@@ -217,7 +217,7 @@ function App() {
     setUrl('');
     let prompt = `Generate a prompt for dalle-3 for the following description. It's an cartoon style avatar for social media. A ${type} image of a ${gender} ${race} ${profession}. Skin tone is ${skinTone}. Hair color is ${hairColor}. Eye color is ${eyeColor}. Hairstyle is ${hairStyle}. Outfit and physical features are ${outfit}. Pose and facial expressions are ${pose}. Background is ${background}. Make sure you replace the color hex code with color names, and only include color names in the prompt.`;
     console.log(prompt);
-    axios.post(`${import.meta.env.API_URL}image`, {
+    axios.post(`${process.env.REACT_APP_API_URL}image`, {
       prompt
     })
       .then(res => {

@@ -1,6 +1,8 @@
-import express from 'express';
-import OpenAI from 'openai';
-import cors from 'cors';
+require('dotenv').config();
+
+const express = require('express');
+const OpenAI = require('openai');
+const cors = require('cors');
 
 const app = express();
 app.use(cors());
@@ -8,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const openai = new OpenAI({
-  apiKey: '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', // defaults to process.env["OPENAI_API_KEY"]
+  apiKey: process.env["API_KEY"], // defaults to process.env["OPENAI_API_KEY"]
 });
 
 app.post('/feedback', async (req, res) => {
@@ -133,31 +135,33 @@ app.post('/plot', async (req, res) => {
 
 app.post('/image', async (req, res) => {
   try {
-    let prompt =  "A vibrant Pokemon scene with a young Pokemon trainer and various Pokemon around the trainer.";
-    if (req.body.appearance) {
-      prompt += "Keywords for the trainer's apperance are: " + req.body.appearance + ".";
-    }
-    if (req.body.scene) {
-      prompt += "Keywords for the scene are: " + req.body.scene + ".";
-    }
-    // prompt += "It should include the following Pokemon and only the following Pokemon: "
-    //  + req.body.pokemons.join(', ') + ".";
-
-    console.log("prompt: ", prompt);
-    const response = await openai.images.generate({
+    const response = await openai.chat.completions.create({
+      model: "gpt-4",
+      messages: [
+        {
+          "role": "user",
+          "content": req.body.prompt,
+        }
+      ]
+    });
+    const completion = response.choices[0].message.content;
+    console.log(completion);
+    const response1 = await openai.images.generate({
       model: "dall-e-3",
-      prompt: "Generate an avatar of a person with a confident, professional demeanor. They should have short, neatly styled hair, and wear a well-fitted suit and tie. The background should be a solid, muted color suitable for a corporate environment.",
+      prompt: completion,
       n: 1,
       size: "1024x1024",
     });
-    console.log(response.data);
-    image_url = response.data.data[0].url;
+    console.log(response1.data);
+    let url = response1.data[0].url;
     res.json({url});
   } catch (err) {
     console.log(err);
   }
 });
 
-app.listen(8000, () => {
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
   console.log('Server is running on port 8000.');
 });
